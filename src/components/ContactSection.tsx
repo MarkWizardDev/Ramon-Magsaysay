@@ -36,6 +36,7 @@ export const ContactSection: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const recipientEmail = 'james@zeusguy.xyz';
@@ -304,79 +305,133 @@ export const ContactSection: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Name and Email row */}
+                  {/* Name and Email row with Animated Floating Labels */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-mono text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2 font-semibold">
-                        Your Full Name *
-                      </label>
+                    {/* Full Name Floating Input */}
+                    <div className="relative">
                       <input
+                        id="contact-name"
                         type="text"
                         required
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        placeholder="e.g. Alex Morgan"
-                        className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-cyan-500 text-sm shadow-sm"
+                        onFocus={() => setFocusedField('name')}
+                        onBlur={() => setFocusedField(null)}
+                        placeholder=" "
+                        className="peer w-full px-4 pt-6 pb-2 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white text-sm shadow-sm focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all"
                       />
+                      <label
+                        htmlFor="contact-name"
+                        className={`absolute left-4 transition-all duration-200 pointer-events-none font-mono ${
+                          focusedField === 'name' || formData.name
+                            ? 'top-2 text-[10px] font-bold tracking-wider text-cyan-600 dark:text-cyan-400 uppercase'
+                            : 'top-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider'
+                        }`}
+                      >
+                        Your Full Name *
+                      </label>
                     </div>
 
-                    <div>
-                      <label className="block text-xs font-mono text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2 font-semibold">
-                        Email Address *
-                      </label>
+                    {/* Email Address Floating Input */}
+                    <div className="relative">
                       <input
+                        id="contact-email"
                         type="email"
                         required
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        placeholder="e.g. alex@example.com"
-                        className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-cyan-500 text-sm shadow-sm"
+                        onFocus={() => setFocusedField('email')}
+                        onBlur={() => setFocusedField(null)}
+                        placeholder=" "
+                        className="peer w-full px-4 pt-6 pb-2 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white text-sm shadow-sm focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all"
                       />
+                      <label
+                        htmlFor="contact-email"
+                        className={`absolute left-4 transition-all duration-200 pointer-events-none font-mono ${
+                          focusedField === 'email' || formData.email
+                            ? 'top-2 text-[10px] font-bold tracking-wider text-cyan-600 dark:text-cyan-400 uppercase'
+                            : 'top-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider'
+                        }`}
+                      >
+                        Email Address *
+                      </label>
                     </div>
                   </div>
 
-                  {/* Country & Subject row */}
+                  {/* Country & Subject row with Animated Floating Labels */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-mono text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2 font-semibold">
-                        Country / Time Zone
-                      </label>
+                    {/* Country Floating Input */}
+                    <div className="relative">
                       <input
+                        id="contact-country"
                         type="text"
                         value={formData.country}
                         onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                        placeholder="e.g. United States (EST)"
-                        className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-cyan-500 text-sm shadow-sm"
+                        onFocus={() => setFocusedField('country')}
+                        onBlur={() => setFocusedField(null)}
+                        placeholder=" "
+                        className="peer w-full px-4 pt-6 pb-2 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white text-sm shadow-sm focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all"
                       />
+                      <label
+                        htmlFor="contact-country"
+                        className={`absolute left-4 transition-all duration-200 pointer-events-none font-mono ${
+                          focusedField === 'country' || formData.country
+                            ? 'top-2 text-[10px] font-bold tracking-wider text-cyan-600 dark:text-cyan-400 uppercase'
+                            : 'top-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider'
+                        }`}
+                      >
+                        Country / Time Zone
+                      </label>
                     </div>
 
-                    <div>
-                      <label className="block text-xs font-mono text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2 font-semibold">
-                        Topic / Subject
-                      </label>
+                    {/* Subject Floating Input */}
+                    <div className="relative">
                       <input
+                        id="contact-subject"
                         type="text"
                         value={formData.subject}
                         onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                        placeholder="Subject inquiry"
-                        className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-cyan-500 text-sm shadow-sm"
+                        onFocus={() => setFocusedField('subject')}
+                        onBlur={() => setFocusedField(null)}
+                        placeholder=" "
+                        className="peer w-full px-4 pt-6 pb-2 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white text-sm shadow-sm focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all"
                       />
+                      <label
+                        htmlFor="contact-subject"
+                        className={`absolute left-4 transition-all duration-200 pointer-events-none font-mono ${
+                          focusedField === 'subject' || formData.subject
+                            ? 'top-2 text-[10px] font-bold tracking-wider text-cyan-600 dark:text-cyan-400 uppercase'
+                            : 'top-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider'
+                        }`}
+                      >
+                        Topic / Subject
+                      </label>
                     </div>
                   </div>
 
-                  {/* Direct Message text area */}
-                  <div>
-                    <label className="block text-xs font-mono text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2 font-semibold">
-                      Direct Message *
-                    </label>
+                  {/* Direct Message text area with Animated Floating Label */}
+                  <div className="relative">
                     <textarea
+                      id="contact-message"
                       required
                       rows={5}
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      placeholder="Write your direct message to NEXATECH (mention your questions regarding remote verification, VMware VM preferences, or revenue share terms)..."
-                      className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-cyan-500 text-sm shadow-sm"
+                      onFocus={() => setFocusedField('message')}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder=" "
+                      className="peer w-full px-4 pt-7 pb-3 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white text-sm shadow-sm focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all resize-y"
                     />
+                    <label
+                      htmlFor="contact-message"
+                      className={`absolute left-4 transition-all duration-200 pointer-events-none font-mono ${
+                        focusedField === 'message' || formData.message
+                          ? 'top-2 text-[10px] font-bold tracking-wider text-cyan-600 dark:text-cyan-400 uppercase'
+                          : 'top-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider'
+                      }`}
+                    >
+                      Direct Message *
+                    </label>
                   </div>
 
                   {/* Dedicated Message Attachments & File Uploads Section */}

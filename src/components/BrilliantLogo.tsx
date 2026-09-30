@@ -89,17 +89,18 @@ export const BrilliantLogo: React.FC<BrilliantLogoProps> = ({
                   <stop offset="100%" stopColor="#d97706" />
                 </radialGradient>
 
+                {/* Soft Natural Ambient Halo Gradient (Seamless 0-opacity fade) */}
+                <radialGradient id="softOrbAura" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.5" />
+                  <stop offset="45%" stopColor="#f59e0b" stopOpacity="0.2" />
+                  <stop offset="100%" stopColor="#f59e0b" stopOpacity="0" />
+                </radialGradient>
+
                 {/* Specular Edge Bevel Reflection */}
                 <linearGradient id="specularHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
                   <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
                   <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
                 </linearGradient>
-
-                {/* Ambient Halo Filter */}
-                <filter id="orbGlowFilter" x="-40%" y="-40%" width="180%" height="180%">
-                  <feGaussianBlur stdDeviation="3.5" result="blur" />
-                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                </filter>
               </defs>
 
               {/* Left Pillar: High-Tech Beveled Cyan Strut */}
@@ -130,46 +131,36 @@ export const BrilliantLogo: React.FC<BrilliantLogoProps> = ({
               <path
                 d="M26 22 L74 76 H83 L35 22 Z"
                 fill="url(#nexaPrismBeam)"
-                className="drop-shadow-[0_0_6px_rgba(56,189,248,0.75)]"
+                className="drop-shadow-[0_0_4px_rgba(56,189,248,0.5)]"
               />
 
-              {/* Radiant Crowned Golden Orb (Positioned above Right Pillar as in user reference) */}
+              {/* Soft, Seamless Natural Golden Beacon (Smooth round lighting, no hard box) */}
               <g className="animate-orb-pulse">
-                {/* Corona Outer Glow Flare */}
+                {/* Seamless Radial Ambient Aura */}
                 <circle
                   cx="72.8"
                   cy="17"
-                  r="13"
-                  fill="#f59e0b"
-                  opacity="0.38"
-                  filter="url(#orbGlowFilter)"
-                />
-                
-                {/* 4-Point Micro Starburst Cross Glint */}
-                <path
-                  d="M72.8 5 L74 17 L85 17 L74 17 L72.8 29 L71.6 17 L60.6 17 L71.6 17 Z"
-                  fill="#ffffff"
-                  opacity="0.85"
+                  r="12"
+                  fill="url(#softOrbAura)"
                 />
 
-                {/* Primary Radiant Sphere */}
+                {/* Primary Radiant Golden Sphere */}
                 <circle
                   cx="72.8"
                   cy="17"
-                  r="7.8"
+                  r="7"
                   fill="url(#solarOrbRadial)"
-                  stroke="#ffffff"
-                  strokeWidth="1.2"
-                  className="drop-shadow-[0_0_8px_rgba(251,191,36,0.95)]"
+                  stroke="#fef08a"
+                  strokeWidth="0.8"
                 />
 
-                {/* Specular Micro Diamond Center Core */}
+                {/* Specular Soft White Core */}
                 <circle
-                  cx="70.8"
-                  cy="14.8"
-                  r="2.4"
+                  cx="71.2"
+                  cy="15.2"
+                  r="2"
                   fill="#ffffff"
-                  opacity="0.95"
+                  opacity="0.9"
                 />
               </g>
             </svg>

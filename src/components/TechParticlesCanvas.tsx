@@ -7,7 +7,7 @@ interface Particle {
   vy: number;
   radius: number;
   baseAlpha: number;
-  color: string;
+  isGold: boolean;
 }
 
 export const TechParticlesCanvas: React.FC = () => {
@@ -24,13 +24,16 @@ export const TechParticlesCanvas: React.FC = () => {
     let isVisible = true;
     const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Palette: Subtle cyan, sky, and warm amber gold
-    const particleColors = [
-      'rgba(56, 189, 248, ',  // sky-400
-      'rgba(6, 182, 212, ',   // cyan-500
-      'rgba(14, 165, 233, ',  // sky-500
-      'rgba(251, 191, 36, ',  // amber-400
-    ];
+    let isDark = document.documentElement.classList.contains('dark');
+
+    // MutationObserver to track real-time theme changes
+    const themeObserver = new MutationObserver(() => {
+      isDark = document.documentElement.classList.contains('dark');
+    });
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
 
     let width = 0;
     let height = 0;
@@ -40,7 +43,7 @@ export const TechParticlesCanvas: React.FC = () => {
     const mouse = {
       x: -9999,
       y: -9999,
-      radius: 140, // interaction radius
+      radius: 150, // interaction radius
     };
 
     const resize = () => {
@@ -54,22 +57,20 @@ export const TechParticlesCanvas: React.FC = () => {
       canvas.height = height * dpr;
       ctx.scale(dpr, dpr);
 
-      // Particle density: ~1 particle per 18,000 sq px, capped between 25 and 65
-      const count = Math.max(25, Math.min(65, Math.floor((width * height) / 18000)));
+      // Particle density: ~1 particle per 17,000 sq px, capped between 30 and 70
+      const count = Math.max(30, Math.min(70, Math.floor((width * height) / 17000)));
 
       particles = [];
       for (let i = 0; i < count; i++) {
-        const isGold = Math.random() < 0.18;
-        const color = isGold ? particleColors[3] : particleColors[Math.floor(Math.random() * 3)];
-        
+        const isGold = Math.random() < 0.22;
         particles.push({
           x: Math.random() * width,
           y: Math.random() * height,
-          vx: (Math.random() - 0.5) * (isReducedMotion ? 0.05 : 0.45),
-          vy: (Math.random() - 0.5) * (isReducedMotion ? 0.05 : 0.45),
-          radius: Math.random() * 1.4 + 1.1,
-          baseAlpha: Math.random() * 0.35 + 0.25,
-          color,
+          vx: (Math.random() - 0.5) * (isReducedMotion ? 0.05 : 0.42),
+          vy: (Math.random() - 0.5) * (isReducedMotion ? 0.05 : 0.42),
+          radius: Math.random() * 1.5 + 1.1,
+          baseAlpha: Math.random() * 0.35 + 0.3,
+          isGold,
         });
       }
     };
@@ -108,17 +109,17 @@ export const TechParticlesCanvas: React.FC = () => {
     canvas.addEventListener('touchend', handleTouchEnd);
 
     // Visibility observer to pause animation when scrolled away
-    const observer = new IntersectionObserver(([entry]) => {
+    const visibilityObserver = new IntersectionObserver(([entry]) => {
       isVisible = entry.isIntersecting;
       if (isVisible) {
         lastTime = performance.now();
       }
     }, { threshold: 0.05 });
 
-    observer.observe(canvas);
+    visibilityObserver.observe(canvas);
 
     // Main render loop
-    const maxLinkDist = 115;
+    const maxLinkDist = 120;
     let lastTime = performance.now();
 
     const render = (time: number) => {
@@ -130,6 +131,13 @@ export const TechParticlesCanvas: React.FC = () => {
 
       ctx.clearRect(0, 0, width, height);
 
+      // Palette configuration based on Dark vs Light mode
+      const cyanColor = isDark ? 'rgba(56, 189, 248, ' : 'rgba(2, 132, 199, ';
+      const altCyanColor = isDark ? 'rgba(6, 182, 212, ' : 'rgba(8, 145, 178, ';
+      const goldColor = isDark ? 'rgba(251, 191, 36, ' : 'rgba(217, 119, 6, ';
+      const lineBaseColor = isDark ? 'rgba(56, 189, 248, ' : 'rgba(2, 132, 199, ';
+      const mouseLineColor = isDark ? 'rgba(103, 232, 249, ' : 'rgba(2, 132, 199, ';
+
       // Update positions & draw lines
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
@@ -138,7 +146,7 @@ export const TechParticlesCanvas: React.FC = () => {
         p.x += p.vx * dt;
         p.y += p.vy * dt;
 
-        // Bounce off canvas boundaries
+        // Bounce off canvas boundaries smoothly
         if (p.x < 0) { p.x = 0; p.vx *= -1; }
         else if (p.x > width) { p.x = width; p.vx *= -1; }
         if (p.y < 0) { p.y = 0; p.vy *= -1; }
@@ -150,21 +158,21 @@ export const TechParticlesCanvas: React.FC = () => {
         const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
 
         if (distMouse < mouse.radius) {
-          const force = (1 - distMouse / mouse.radius) * 1.8;
+          const force = (1 - distMouse / mouse.radius) * 1.6;
           p.x -= (dxMouse / (distMouse || 1)) * force;
           p.y -= (dyMouse / (distMouse || 1)) * force;
 
           // Connecting laser line to mouse cursor
-          const mouseLineAlpha = (1 - distMouse / mouse.radius) * 0.28;
+          const mouseLineAlpha = (1 - distMouse / mouse.radius) * (isDark ? 0.35 : 0.28);
           ctx.beginPath();
           ctx.moveTo(p.x, p.y);
           ctx.lineTo(mouse.x, mouse.y);
-          ctx.strokeStyle = `rgba(56, 189, 248, ${mouseLineAlpha})`;
-          ctx.lineWidth = 0.9;
+          ctx.strokeStyle = `${mouseLineColor}${mouseLineAlpha})`;
+          ctx.lineWidth = isDark ? 0.9 : 1.1;
           ctx.stroke();
         }
 
-        // Draw connections between neighboring particles
+        // Draw connections between neighboring particles (Constellation mesh)
         for (let j = i + 1; j < particles.length; j++) {
           const p2 = particles[j];
           const dx = p.x - p2.x;
@@ -172,27 +180,28 @@ export const TechParticlesCanvas: React.FC = () => {
           const dist = Math.sqrt(dx * dx + dy * dy);
 
           if (dist < maxLinkDist) {
-            const lineAlpha = (1 - dist / maxLinkDist) * 0.16;
+            const lineAlpha = (1 - dist / maxLinkDist) * (isDark ? 0.18 : 0.14);
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(56, 189, 248, ${lineAlpha})`;
-            ctx.lineWidth = 0.65;
+            ctx.strokeStyle = `${lineBaseColor}${lineAlpha})`;
+            ctx.lineWidth = isDark ? 0.65 : 0.8;
             ctx.stroke();
           }
         }
 
         // Draw individual particle node
+        const particleColorPrefix = p.isGold ? goldColor : (i % 2 === 0 ? cyanColor : altCyanColor);
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `${p.color}${p.baseAlpha})`;
+        ctx.fillStyle = `${particleColorPrefix}${p.baseAlpha})`;
         ctx.fill();
 
         // Subtle glow halo for particles close to cursor
         if (distMouse < mouse.radius) {
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.radius * 2.2, 0, Math.PI * 2);
-          ctx.fillStyle = `${p.color}0.15)`;
+          ctx.fillStyle = `${particleColorPrefix}${isDark ? 0.2 : 0.14})`;
           ctx.fill();
         }
       }
@@ -207,7 +216,8 @@ export const TechParticlesCanvas: React.FC = () => {
       window.removeEventListener('mouseleave', handleMouseLeave);
       canvas.removeEventListener('touchmove', handleTouchMove);
       canvas.removeEventListener('touchend', handleTouchEnd);
-      observer.disconnect();
+      visibilityObserver.disconnect();
+      themeObserver.disconnect();
     };
   }, []);
 
@@ -215,7 +225,7 @@ export const TechParticlesCanvas: React.FC = () => {
     <canvas
       ref={canvasRef}
       className="absolute inset-0 w-full h-full pointer-events-auto z-1"
-      style={{ opacity: 0.9 }}
+      style={{ opacity: 0.95 }}
       aria-hidden="true"
     />
   );
